@@ -236,3 +236,269 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-faint);
   margin-top: var(--space-1);
 }
+
+/* ─── App shell ─── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Sticky translucent paper top bar */
+.shell-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.shell-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+
+.shell-topbar__org {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+  white-space: nowrap;
+}
+
+.shell-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.shell-topbar__email {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40vw;
+}
+
+.shell-signout {
+  /* smaller than default ghost button for the utility bar */
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+}
+
+/* Body region: sidebar + main */
+.shell-body {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-8) var(--gutter);
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+
+.shell-main {
+  min-width: 0;
+}
+
+/* Navigation */
+.shell-nav {
+  position: sticky;
+  top: 88px;
+}
+
+.shell-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.shell-nav__link {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--trans), background var(--trans);
+}
+
+.shell-nav__link:hover {
+  color: var(--text);
+  background: var(--surface-3);
+}
+
+.shell-nav__link--active,
+.shell-nav__link--active:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Narrow viewports: sidebar collapses to a horizontal scroll strip on top */
+@media (max-width: 768px) {
+  .shell-body {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: var(--space-5);
+    gap: var(--space-5);
+  }
+
+  .shell-nav {
+    position: static;
+  }
+
+  .shell-nav__list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .shell-nav__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shell-nav__link {
+    border: 1px solid var(--border);
+  }
+
+  .shell-nav__link--active,
+  .shell-nav__link--active:hover {
+    border-color: var(--accent-border);
+  }
+
+  .shell-topbar__email {
+    display: none;
+  }
+}
+
+/* ─── Shared state blocks (empty / loading / error) ─── */
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: clamp(28px, 5vw, 56px) var(--space-6);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-3);
+}
+
+.state-block--error {
+  border-style: solid;
+  border-color: var(--accent-border);
+  background: var(--surface-2);
+}
+
+.state-block__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--accent-dim);
+}
+
+.state-block__icon--error {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--accent-strong);
+}
+
+.state-block__label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-base);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.state-block__desc {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  max-width: 48ch;
+}
+
+.state-block__hint {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.state-block__action {
+  margin-top: var(--space-2);
+}
+
+/* Loading skeleton */
+.state-skeleton {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.state-skeleton__bar {
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    var(--surface) 0%,
+    var(--surface-2) 50%,
+    var(--surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: state-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes state-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state-skeleton__bar {
+    animation: none;
+  }
+}
+
+/* Visually hidden but screen-reader accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
