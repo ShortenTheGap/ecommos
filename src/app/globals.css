@@ -490,6 +490,132 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* ─── Cockpit module ─── */
+.cockpit-section {
+  margin-top: clamp(40px, 6vw, 72px);
+}
+
+.cockpit-section:first-of-type {
+  margin-top: var(--space-8);
+}
+
+.cockpit-head {
+  max-width: 64ch;
+}
+
+.cockpit-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+  margin-top: var(--space-4);
+}
+
+.cockpit-lede {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+  line-height: 1.65;
+}
+
+.cockpit-subhead {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.cockpit-subhead-note {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+/* Recommendation card internals */
+.rec-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rec-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.rec-dot--critical {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+.rec-dot--warning {
+  background: var(--accent);
+}
+
+.rec-dot--info {
+  background: var(--text-faint);
+}
+
+.rec-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.rec-module {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+}
+
+.rec-message {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.rec-action {
+  font-size: var(--text-sm);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.rec-action::before {
+  content: "→ ";
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.cockpit-narrative {
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--text);
+  max-width: 72ch;
+}
+
+.cockpit-narrative strong {
+  font-weight: 600;
+}
+
 /* Visually hidden but screen-reader accessible */
 .sr-only {
   position: absolute;
