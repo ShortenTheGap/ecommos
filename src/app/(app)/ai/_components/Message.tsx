@@ -1,5 +1,7 @@
 "use client";
 
+import { Markdown } from "@/components/Markdown";
+
 /**
  * Message — renders a single conversation turn (user or assistant).
  *
@@ -75,7 +77,7 @@ function BlockedNotice({ blocked }: { blocked: BlockedClaim[] }) {
       <ul className="msg-blocked__list">
         {blocked.map((b, i) => (
           <li key={i} className="msg-blocked__item">
-            <span className="msg-blocked__phrase">"{b.phrase}"</span>
+            <span className="msg-blocked__phrase">&ldquo;{b.phrase}&rdquo;</span>
             <span className="msg-blocked__reason">{b.reason}</span>
           </li>
         ))}
@@ -117,7 +119,7 @@ export function Message({ message }: MessageProps) {
   return (
     <div className="msg-row msg-row--assistant">
       <div className="bento-card msg-assistant">
-        <p className="msg-text">{text}</p>
+        <Markdown className="msg-text">{text}</Markdown>
 
         {citations.length > 0 && <CitationList citations={citations} />}
 

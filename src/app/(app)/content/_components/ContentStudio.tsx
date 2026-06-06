@@ -22,6 +22,7 @@
 import { useState, useTransition } from "react";
 
 import { Card, Eyebrow, Button } from "@/components/bento";
+import { Markdown } from "@/components/Markdown";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -254,8 +255,8 @@ export function ContentStudio() {
         {/* Draft output */}
         {draft && (
           <div style={{ marginTop: "var(--space-5)" }}>
-            <div className="bento-card" style={{ whiteSpace: "pre-wrap", fontSize: "var(--text-sm)", lineHeight: 1.75 }}>
-              {draft}
+            <div className="bento-card">
+              <Markdown>{draft}</Markdown>
             </div>
 
             {/* Citations */}
