@@ -1,20 +1,16 @@
 /**
- * Authenticated app shell.
+ * App shell — DEMO MODE (no auth).
  *
  * Every module (Cockpit, Products, Margin, Content, Inventory, Vendors, AI)
- * renders inside this layout. It is an async server component that:
- *   1. Resolves the current user + active organization (RLS-respecting).
- *   2. Redirects to /login when there is no session/membership.
- *   3. Renders the sticky top bar (org + email + sign-out) and the left nav.
+ * renders inside this layout. It is an async server component that resolves the
+ * seeded demo organization via requireOrg() (service-role, no session) and
+ * renders the sticky top bar (org identity + Demo chip) and the left nav.
  *
- * The proxy already gates these routes, but we resolve the org here so child
- * pages can rely on a guaranteed-present session and we can show org identity.
+ * There is no login: requireOrg() always returns the demo org, so there is no
+ * redirect path here.
  */
 
-import { redirect } from "next/navigation";
-
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentUserAndOrg } from "@/lib/data/org";
+import { requireOrg } from "@/lib/data/org";
 import { Topbar } from "@/components/shell/Topbar";
 import { Sidebar } from "@/components/shell/Sidebar";
 
@@ -23,23 +19,11 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const result = await getCurrentUserAndOrg(supabase);
-
-  if (!result) {
-    redirect("/login");
-  }
-
-  // We still need the email for the top bar; getUser already ran inside
-  // getCurrentUserAndOrg, but the email is cheap to re-read from the session.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const userEmail = user?.email ?? "";
+  const { org } = await requireOrg();
 
   return (
     <div className="shell">
-      <Topbar orgName={result.org.name} userEmail={userEmail} />
+      <Topbar orgName={org.name} />
 
       <div className="shell-body">
         <Sidebar />

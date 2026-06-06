@@ -14,7 +14,7 @@
 import type { CSSProperties } from "react";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadCockpit, type CockpitData, type KpiMetric } from "@/lib/data/cockpit";
 import type { Recommendation, Severity } from "@/lib/domain/recommendations";
 import {
@@ -125,7 +125,7 @@ function buildNarrative(data: CockpitData): string {
 
 export default async function CockpitPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const data = await loadCockpit(supabase, org.id);
 
   const { kpis, recommendations, summary } = data;

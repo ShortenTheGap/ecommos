@@ -18,7 +18,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { loadVendor } from "@/lib/data/vendors";
 import { Eyebrow } from "@/components/bento";
@@ -44,7 +43,7 @@ export default async function VendorDetailPage({
 }) {
   const { id } = await params;
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const detail = await loadVendor(supabase, org.id, id);
   if (!detail) {
@@ -74,9 +73,9 @@ export default async function VendorDetailPage({
   const variantCogs = variantsRes.data?.cogs ?? null;
 
   // ── List vendor documents from the bucket ────────────────────────────────────
-  // Use service client for storage listing (bucket is private; RLS policies
-  // may not cover storage list operations via the user client).
-  const serviceClient = createServiceClient();
+  // The same service-role client (used for all reads in demo mode) lists the
+  // private bucket — no separate client needed.
+  const serviceClient = supabase;
   const prefix = `${org.id}/vendors/${id}/`;
   const listRes = await serviceClient.storage
     .from(STORAGE_BUCKET)

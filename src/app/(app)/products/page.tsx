@@ -15,7 +15,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import {
   loadProducts,
   type ProductListItem,
@@ -106,7 +106,7 @@ function ProductCard({
 
 export default async function ProductsPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const products = await loadProducts(supabase, org.id);
 
   // The single accent highlight: the first product that needs compliance

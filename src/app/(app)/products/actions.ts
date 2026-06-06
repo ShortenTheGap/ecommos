@@ -21,7 +21,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import {
   truthRecordSchema,
   claimSchema,
@@ -69,7 +69,7 @@ function isUploadedFile(value: FormDataEntryValue | null): value is File {
  * Returns the stored object path on success, or an error string on failure.
  */
 async function uploadComplianceFile(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: ReturnType<typeof createServiceClient>,
   orgId: string,
   productId: string,
   kind: string,
@@ -102,7 +102,7 @@ async function uploadComplianceFile(
 
 /** Best-effort audit insert. Never throws — a failed audit must not fail a save. */
 async function writeAudit(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: ReturnType<typeof createServiceClient>,
   params: {
     orgId: string;
     actor: string;
@@ -134,7 +134,7 @@ async function writeAudit(
 
 export async function updateTruthRecord(form: FormData): Promise<ActionResult> {
   const { userId, org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Parse + validate the relational fields (uploads handled separately).
   const parsed = truthRecordSchema.safeParse({
@@ -266,7 +266,7 @@ export async function updateTruthRecord(form: FormData): Promise<ActionResult> {
 
 export async function upsertClaim(form: FormData): Promise<ActionResult> {
   const { userId, org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const parsed = claimSchema.safeParse({
     productId: str(form, "productId"),

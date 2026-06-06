@@ -20,7 +20,6 @@
  */
 
 import { useState, useRef, useTransition, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import type { AgentProfile } from "@/lib/ai/agents";
 import type { MessageData } from "./Message";
 import { Message } from "./Message";
@@ -144,8 +143,6 @@ function InlineErrorBanner({ error }: { error: InlineError }) {
 // =============================================================================
 
 export function AiChat({ profiles }: AiChatProps) {
-  const router = useRouter();
-
   const defaultProfile = profiles.find((p) => p.key === "margin_analyst") ?? profiles[0];
   const [selectedProfile, setSelectedProfile] = useState<AgentProfile>(
     defaultProfile?.key ?? "margin_analyst",
@@ -198,11 +195,6 @@ export function AiChat({ profiles }: AiChatProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile: selectedProfile, message: trimmed }),
       });
-
-      if (res.status === 401) {
-        router.push("/login");
-        return;
-      }
 
       if (res.status === 400) {
         setMessages((prev) => prev.filter((m) => m.role !== "thinking"));

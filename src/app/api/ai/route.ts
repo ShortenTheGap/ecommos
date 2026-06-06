@@ -6,7 +6,7 @@
  *
  * Pipeline:
  *   1. Validate the body (Zod). Empty message → 400.
- *   2. Resolve the signed-in user + active org via the cookie client. None → 401.
+ *   2. Resolve the seeded demo org via the service-role client (no auth).
  *   3. Run the orchestrator (Claude tool loop + claim guardrail).
  *   4. Persist the exchange: one ai_conversations row + a user/assistant pair of
  *      ai_messages rows (assistant row carries citations + blocked_claims jsonb).
@@ -21,8 +21,8 @@
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { getCurrentUserAndOrg } from "@/lib/data/org";
+import { createServiceClient } from "@/lib/supabase/server";
+import { requireOrg } from "@/lib/data/org";
 import { runAgent } from "@/lib/ai/run";
 import type { AgentProfile } from "@/lib/ai/agents";
 
@@ -69,13 +69,8 @@ export async function POST(request: Request): Promise<Response> {
   }
   const { profile, message } = parsed.data;
 
-  // 2. Resolve user + org (cookie client → RLS-respecting auth).
-  const supabase = await createClient();
-  const userAndOrg = await getCurrentUserAndOrg(supabase);
-  if (!userAndOrg) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const { userId, org } = userAndOrg;
+  // 2. Resolve the demo org (no auth — service-role client inside requireOrg).
+  const { userId, org } = await requireOrg();
 
   // 3. Run the orchestrator. Anthropic/config failures → 502 graceful degrade.
   let result;
