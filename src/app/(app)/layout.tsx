@@ -14,6 +14,11 @@ import { requireOrg } from "@/lib/data/org";
 import { Topbar } from "@/components/shell/Topbar";
 import { Sidebar } from "@/components/shell/Sidebar";
 
+// These pages render live data from the database per request — never prerender
+// them at build time (the build env has no DB access). Force dynamic rendering
+// for the whole (app) segment and all child routes.
+export const dynamic = "force-dynamic";
+
 export default async function AppLayout({
   children,
 }: {
