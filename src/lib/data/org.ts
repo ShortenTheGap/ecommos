@@ -1,27 +1,25 @@
 /**
- * Active-organization data access.
+ * Active-organization data access — DEMO MODE (no auth).
  *
- * Every authenticated page needs to know "who is the current user and which
- * organization are they operating inside?". This module is the canonical place
- * to answer that question.
+ * NourishOS is running as a no-auth public demo. There is no login and no
+ * session; every request reads and writes the seeded demo brand ("Ember Goods")
+ * using the service-role client (RLS bypassed). This module is the canonical
+ * place to resolve "which organization are we operating inside, and which user
+ * is the actor for audit purposes?".
  *
- *   getCurrentUserAndOrg(supabase) — given a Supabase client, resolves the
- *     signed-in user and their first membership's organization. Returns null
- *     when there is no user or no membership (e.g. a brand-new account that has
- *     not been provisioned yet). RLS-respecting when passed the cookie-aware
- *     server client.
+ *   getCurrentUserAndOrg() — resolves the demo org + its owner user via the
+ *     service-role client. The legacy `supabase` parameter is accepted for
+ *     back-compat but ignored.
  *
- *   requireOrg() — convenience wrapper that builds a fresh server client,
- *     calls getCurrentUserAndOrg, and redirects to /login if the result is
- *     null. Use this in pages/route handlers that must have an active org.
+ *   requireOrg() — convenience wrapper that always returns the demo org. Throws
+ *     a clear Error if no organization exists at all (it never redirects).
  */
 
 import "server-only";
 
-import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import type { Organization } from "@/lib/types";
 
 export interface UserAndOrg {
@@ -30,65 +28,74 @@ export interface UserAndOrg {
 }
 
 /**
- * Shape returned by the membership → organization embed below. Supabase's
- * PostgREST embedding returns the related row under the relationship name.
- */
-interface MembershipWithOrg {
-  organization_id: string;
-  organizations: Organization | null;
-}
-
-/**
- * Resolve the current user and their active organization.
+ * Resolve the demo organization and a real owner user id (for audit actors).
  *
- * @param supabase A Supabase client. Pass the cookie-aware server client so
- *                 the query runs as the authenticated user (RLS-respecting).
- * @returns `{ userId, org }` or `null` if there is no signed-in user or the
- *          user has no membership.
+ * Selection: all organizations ordered by `created_at asc`; prefer the one
+ * named "Ember Goods" (case-insensitive), otherwise the first row. Then the
+ * org's owner membership (preferring role 'owner', else any membership) is read
+ * to obtain a real `user_id` UUID.
+ *
+ * @param _supabase Accepted for back-compat with old callers; ignored. The
+ *                  query always runs through the service-role client.
+ * @returns `{ userId, org }`, or `null` if no organization exists.
  */
 export async function getCurrentUserAndOrg(
-  supabase: SupabaseClient,
+  _supabase?: SupabaseClient,
 ): Promise<UserAndOrg | null> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const admin = createServiceClient();
 
-  if (userError || !user) {
+  // Fetch all orgs (deterministic order) and prefer the seeded demo brand.
+  const { data: orgs, error: orgError } = await admin
+    .from("organizations")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (orgError || !orgs || orgs.length === 0) {
     return null;
   }
 
-  // Join memberships → organizations and take the user's first membership.
-  // ordered by created_at so the result is deterministic when a user belongs
-  // to more than one org.
-  const { data, error } = await supabase
+  const org =
+    (orgs as Organization[]).find(
+      (o) => (o.name ?? "").toLowerCase() === "ember goods",
+    ) ?? (orgs[0] as Organization);
+
+  // Resolve a real user id from the org's memberships to use as the audit
+  // actor. Prefer the owner; fall back to any membership.
+  const { data: memberships } = await admin
     .from("memberships")
-    .select("organization_id, organizations(*)")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle<MembershipWithOrg>();
+    .select("user_id, role")
+    .eq("organization_id", org.id);
 
-  if (error || !data || !data.organizations) {
-    return null;
+  let userId: string | null = null;
+  if (memberships && memberships.length > 0) {
+    const rows = memberships as Array<{ user_id: string; role: string | null }>;
+    const owner = rows.find((m) => m.role === "owner");
+    userId = (owner ?? rows[0]).user_id;
   }
 
-  return { userId: user.id, org: data.organizations };
+  // No membership rows — fall back to the org id so callers still get a UUID
+  // (audit_log actor). This keeps the demo functional even on a sparse seed.
+  if (!userId) {
+    userId = org.id;
+  }
+
+  return { userId, org };
 }
 
 /**
- * Require an active organization, building a fresh cookie-aware server client.
- * Redirects to /login when there is no user/membership.
+ * Require an active organization. In demo mode this always resolves the seeded
+ * demo org via the service-role client — it never redirects to /login.
  *
- * Note: `redirect()` throws internally, so the non-null return type is sound —
- * control never falls through to a null value.
+ * @throws Error when no organization exists in the database at all.
  */
 export async function requireOrg(): Promise<UserAndOrg> {
-  const supabase = await createClient();
-  const result = await getCurrentUserAndOrg(supabase);
+  const result = await getCurrentUserAndOrg();
 
   if (!result) {
-    redirect("/login");
+    throw new Error(
+      "[NourishOS] No organization found. The demo database has not been " +
+        "seeded — run the seed script to create the Ember Goods demo org.",
+    );
   }
 
   return result;

@@ -19,7 +19,7 @@
 import type { CSSProperties } from "react";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadInventory } from "@/lib/data/inventory";
 import type {
   InventoryData,
@@ -347,7 +347,7 @@ function ThreeplSlaTracker({ rows }: { rows: ThreeplSlaRow[] }) {
 
 export default async function InventoryPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const data: InventoryData = await loadInventory(supabase, org.id);
 
   const {

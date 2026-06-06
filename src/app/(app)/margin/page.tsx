@@ -15,7 +15,7 @@
 import type { CSSProperties } from "react";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadMargin, type MarginData } from "@/lib/data/margin";
 import type { ChannelMarginRowWithAov } from "@/lib/data/margin";
 import type { CampaignMarginRow } from "@/lib/domain/margin";
@@ -134,7 +134,7 @@ const HEALTHY_CM_PCT_THRESHOLD = 0.3;
 
 export default async function MarginPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const data: MarginData = await loadMargin(supabase, org.id);
 
   const {

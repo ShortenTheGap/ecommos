@@ -19,7 +19,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadProduct, type ProductDetail } from "@/lib/data/products";
 import { formatCurrency, formatNumber, EM_DASH } from "@/lib/format";
 import { Card, Eyebrow } from "@/components/bento";
@@ -70,7 +70,7 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const detail = await loadProduct(supabase, org.id, id);
 
   if (!detail) {

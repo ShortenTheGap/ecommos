@@ -22,7 +22,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import type { VendorType } from "@/lib/types";
 
 // =============================================================================
@@ -124,7 +124,7 @@ const productionRunSchema = z.object({
  */
 export async function createVendor(form: FormData): Promise<ActionResult> {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const parsed = vendorSchema.safeParse({
     name: str(form, "name"),
@@ -183,7 +183,7 @@ export async function createVendor(form: FormData): Promise<ActionResult> {
  */
 export async function updateVendor(form: FormData): Promise<ActionResult> {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const vendorId = str(form, "vendorId");
   if (!vendorId) {
@@ -249,7 +249,7 @@ export async function updateVendor(form: FormData): Promise<ActionResult> {
  */
 export async function createProductionRun(form: FormData): Promise<ActionResult> {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const rawProductId = str(form, "productId");
   const rawQty = str(form, "quantity");
@@ -326,7 +326,7 @@ export async function uploadVendorDoc(
   form: FormData,
 ): Promise<{ ok: true; path: string } | { ok: false; error: string }> {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const vendorId = str(form, "vendorId");
   if (!vendorId) {

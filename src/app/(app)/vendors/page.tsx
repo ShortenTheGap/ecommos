@@ -18,7 +18,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadVendors, type VendorListItem } from "@/lib/data/vendors";
 import { formatNumber, EM_DASH } from "@/lib/format";
 import { Card, Eyebrow } from "@/components/bento";
@@ -112,7 +112,7 @@ function VendorCard({
 
 export default async function VendorsPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const vendors = await loadVendors(supabase, org.id);
 
   // Accent highlight: the vendor with the shortest lead time (book soonest).

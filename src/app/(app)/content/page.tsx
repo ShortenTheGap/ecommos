@@ -18,7 +18,7 @@
 import type { CSSProperties } from "react";
 
 import { requireOrg } from "@/lib/data/org";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { loadContent, type CampaignCalendarRow, type AssetRow } from "@/lib/data/content";
 import { formatCurrency, formatNumber, formatPercent, EM_DASH } from "@/lib/format";
 import { Card, Eyebrow, Kpi } from "@/components/bento";
@@ -158,7 +158,7 @@ function AssetTableRow({ row }: { row: AssetRow }) {
 
 export default async function ContentPage() {
   const { org } = await requireOrg();
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const data = await loadContent(supabase, org.id);
 
   const { calendarRows, assetRows, kpis } = data;
