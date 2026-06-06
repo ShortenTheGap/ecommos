@@ -1298,3 +1298,235 @@ h1, h2, h3, h4, h5, h6 {
 .sp-delta--neutral {
   color: var(--text-faint);
 }
+
+/* =============================================================================
+   Inventory & Fulfillment Health (Module 5)
+   ============================================================================= */
+
+.inv-section {
+  margin-top: clamp(40px, 6vw, 72px);
+}
+.inv-section:first-of-type {
+  margin-top: var(--space-8);
+}
+.inv-head {
+  max-width: 64ch;
+}
+.inv-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+  margin-top: var(--space-4);
+}
+.inv-lede {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+  line-height: 1.65;
+}
+.inv-subhead {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  margin: 0 0 var(--space-4);
+}
+
+/* ─── Inventory data table (shared with margin-table base) ─── */
+.inv-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.inv-table th {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.inv-table th:last-child,
+.inv-table td:last-child {
+  text-align: right;
+  padding-right: 0;
+}
+.inv-table td {
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+.inv-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ─── Reorder status badge ─── */
+.inv-status {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+}
+.inv-status--ok {
+  color: var(--text-muted);
+  background: var(--surface-3);
+}
+.inv-status--reorder {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+}
+.inv-status--critical {
+  color: var(--accent-strong);
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+}
+
+/* ─── Lot aging highlight ─── */
+.inv-lot-row--at-risk td {
+  background: var(--accent-dim);
+}
+.inv-lot-expiry--at-risk {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+/* ─── Exception feed ─── */
+.inv-exception-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.inv-exception-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+.inv-exception-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.inv-exception-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.inv-exception-dot--damaged {
+  background: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.inv-exception-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.inv-exception-title {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+}
+.inv-exception-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.inv-exception-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.inv-exception-badge--delayed {
+  color: var(--text);
+  border-color: var(--accent-border);
+  background: var(--accent-dim);
+}
+.inv-exception-badge--damaged {
+  color: var(--accent-strong);
+  border-color: var(--accent-border);
+  background: var(--accent-dim);
+}
+
+/* ─── SLA tracker ─── */
+.inv-sla-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.inv-sla-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.inv-sla-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.inv-sla-name {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+}
+.inv-sla-rate {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text);
+}
+.inv-sla-bar-track {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.inv-sla-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  transition: width var(--trans);
+}
+.inv-sla-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
