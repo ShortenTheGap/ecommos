@@ -104,7 +104,7 @@ create table product_truth_records (
   serving_size        text,
   net_weight          text,
   version             int default 1,
-  approval_status     text default 'draft' check (approval_status in ('draft','pending','approved')),
+  approval_status     text not null default 'draft' check (approval_status in ('draft','pending','approved')),
   created_at          timestamptz not null default now(),
   updated_at          timestamptz
 );
@@ -119,8 +119,8 @@ create table claims (
   claim_text      text not null,
   claim_type      text,
   evidence        text,
-  approval_status text default 'pending' check (approval_status in ('pending','approved','rejected')),
-  risk_level      text default 'medium' check (risk_level in ('low','medium','high')),
+  approval_status text not null default 'pending' check (approval_status in ('pending','approved','rejected')),
+  risk_level      text not null default 'medium' check (risk_level in ('low','medium','high')),
   channels_used   text[],
   created_at      timestamptz not null default now(),
   updated_at      timestamptz
